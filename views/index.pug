@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  ul
+    if user
+      li
+        p #{user.email} (#{!user.membership ? 'non member': user.membership})
+      li
+        a(href='/member') Update member status
+      li
+        a(href='/logout') Log out
+    else
+      li
+        a(href='/sign-up') Sign up
+      li
+        a(href='/login') Login
+  h1= title
+
+  if user && user.membership !== ''
+    form(action="/post" method='post')
+      div
+        label(for='title') Title:&nbsp;
+        input#title(type="text" name="title")
+      div
+        label(for='content') Content:&nbsp;
+        textarea#content(name="content")
+      button(type="submit") Post
+
+  if posts.length
+    for post in posts
+      div
+        h2= post.title
+        p= post.content
+        p= post.timestamp_formatted
+        if user
+          if user.membership === 'member' || user.membership === 'admin'
+            p Author: #{post.author.fullname}
+          if user.membership === 'admin'
+            form(action=(post.url + '/delete') method="post")
+              button(type="submit") Delete
+        hr
+  else
+    p There is no post

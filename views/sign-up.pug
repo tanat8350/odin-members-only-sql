@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  a(href='/') Home
+  h1 Sign up
+
+  form(method="post")
+    div
+      label(for='first-name') First name:&nbsp;
+      input(type='text' id='first_name' name='first_name' required value=(undefined === user ? '' : user.first_name))
+    div
+      label(for='last-name') Last name:&nbsp;
+      input(type='text' id='last_name' name='last_name' required value=(undefined === user ? '' : user.last_name))
+    div
+      label(for='email') Email:&nbsp;
+      input(type='email' id='email' name='email' required value=(undefined === user ? '' : user.email))
+    div
+      label(for='password') Password:&nbsp;
+      input(type='password' id='password' name='password' required value=(undefined === user ? '' : user.password))
+    button(type="submit") Sign up
+  p Already have an account?&nbsp;
+    a(href='/login') Login
+
+  if errors
+    ul
+      for error in errors
+        li= error.msg

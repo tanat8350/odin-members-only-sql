@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  if user
+    ul
+      li
+        a(href='/') Home
+      li
+        p #{user.email} (#{!user.membership ? 'non member': user.membership})
+      li
+        a(href='logout') Logout
+    form(method="post")
+      div
+        label(for="code") Enter code:&nbsp;
+        input#code(type="text", name="code")
+      button(type="submit") Submit
+  else
+    ul
+      li
+        a(href='/') Home
+    p Please&nbsp;
+      a(href='/login') login&nbsp;
+      | first

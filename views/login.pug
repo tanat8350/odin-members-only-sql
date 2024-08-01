@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  a(href='/') Home
+  h1 Login
+
+  form(method="post")
+    div
+      label(for='email') Email:&nbsp;
+      input(type='text' id='email' name='email' required)
+    div
+      label(for='password') Password:&nbsp;
+      input(type='password' id='password' name='password' required)
+    button(type="submit") Login
+  p Do not have an account&nbsp;
+    a(href='/sign-up') Sign up
