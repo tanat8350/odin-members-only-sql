@@ -12,7 +12,6 @@ const helmet = require('helmet');
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo');
 
 mongoose.set('strictQuery', false);
 
@@ -45,11 +44,11 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    // store: MongoStore.create({
-    //   mongoUrl: process.env.DB_URI,
-    //   collection: 'sessions',
-    // }),
-    cookie: { maxAge: 86400000 },
+    store: new (require('connect-pg-simple')(session))({
+      pool: require('./db/pool'),
+      createTableIfMissing: true,
+    }),
+    cookie: { maxAge: 86400000 }, // 1 day
   })
 );
 app.use(passport.session());
