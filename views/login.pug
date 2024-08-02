@@ -7,10 +7,14 @@ block content
   form(method="post")
     div
       label(for='email') Email:&nbsp;
-      input(type='text' id='email' name='email' required)
+      input(type='text' id='email' name='email' required value=(undefined === email ? '' : email))
     div
       label(for='password') Password:&nbsp;
       input(type='password' id='password' name='password' required)
     button(type="submit") Login
+  if errors
+    ul
+      for error in errors
+        li= error.msg
   p Do not have an account&nbsp;
-    a(href='/sign-up') Sign up
+    a(href='/signup') Sign up

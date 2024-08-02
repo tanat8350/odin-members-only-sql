@@ -1,22 +1,20 @@
 const { body, validationResult } = require('express-validator');
+const asyncHandler = require('express-async-handler');
 
-const Post = require('../models/post');
-const User = require('../models/user');
+const postQueries = require('../db/postQueries');
 
-exports.index = async (req, res, next) => {
-  const posts = await Post.find()
-    .sort({ timestamp: 1 })
-    .populate('author')
-    .exec();
+exports.getAllPosts = asyncHandler(async (req, res, next) => {
+  delete req.session.lastEmail;
+  const posts = await postQueries.getAllPosts();
 
   res.render('index', {
     title: 'Home',
     user: req.user,
     posts,
   });
-};
+});
 
-exports.post = [
+exports.postCreatePost = [
   body('title')
     .trim()
     .isLength({ min: 3, max: 100 })
@@ -27,25 +25,38 @@ exports.post = [
     .isLength({ min: 1 })
     .withMessage('Content is required')
     .escape(),
-  async (req, res, next) => {
+  asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    const post = new Post({
+    const form = {
       title: req.body.title,
       content: req.body.content,
-      author: req.user._id,
-    });
+      userid: req.user.id,
+    };
 
     if (!errors.isEmpty()) {
+      const posts = await postQueries.getAllPosts();
+      res.render('index', {
+        form,
+        posts,
+        user: req.user,
+        errors: errors.array(),
+      });
       return;
     }
 
-    await post.save();
+    const created = await postQueries.createPost(form);
+    if (!created) {
+      return next({ status: 404, message: 'Fail to create post' });
+    }
     res.redirect('/');
-  },
+  }),
 ];
 
-exports.post_delete = async (req, res, next) => {
-  await Post.findByIdAndDelete(req.params.id);
+exports.postDeletePost = asyncHandler(async (req, res, next) => {
+  const deleted = await postQueries.deletePost(req.params.id);
+  if (!deleted) {
+    return next({ status: 404, message: 'Fail to delete post' });
+  }
   res.redirect('/');
-};
+});

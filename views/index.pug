@@ -11,7 +11,7 @@ block content
         a(href='/logout') Log out
     else
       li
-        a(href='/sign-up') Sign up
+        a(href='/signup') Sign up
       li
         a(href='/login') Login
   h1= title
@@ -20,11 +20,15 @@ block content
     form(action="/post" method='post')
       div
         label(for='title') Title:&nbsp;
-        input#title(type="text" name="title")
+        input#title(type="text" name="title" value=(undefined === form ? '' : form.title))
       div
         label(for='content') Content:&nbsp;
         textarea#content(name="content")
       button(type="submit") Post
+  if errors
+    ul
+      for error in errors
+        li= error.msg
 
   if posts.length
     for post in posts
@@ -34,9 +38,9 @@ block content
         p= post.timestamp_formatted
         if user
           if user.membership === 'member' || user.membership === 'admin'
-            p Author: #{post.author.fullname}
+            p Author: #{post.firstname}
           if user.membership === 'admin'
-            form(action=(post.url + '/delete') method="post")
+            form(action=(`/post/${post.postid}/delete`) method="post")
               button(type="submit") Delete
         hr
   else

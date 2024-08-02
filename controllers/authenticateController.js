@@ -7,7 +7,7 @@ const authenticateQueries = require('../db/authenticateQueries');
 const bcrypt = require('bcryptjs');
 
 exports.getSignup = (req, res, next) => {
-  res.render('sign-up', { title: 'Sign up' });
+  res.render('signup', { title: 'Sign up' });
 };
 
 exports.postSignup = [
@@ -46,7 +46,7 @@ exports.postSignup = [
     };
 
     if (!errors.isEmpty()) {
-      res.render('sign-up', {
+      res.render('signup', {
         title: 'Sign up',
         user,
         errors: errors.array(),
@@ -69,14 +69,36 @@ exports.postSignup = [
 ];
 
 exports.getLogin = (req, res, next) => {
+  let error;
+  const email = req.session.lastEmail;
+  const messages = req.session.messages;
+  if (messages) {
+    error = [
+      {
+        msg: messages[messages.length - 1],
+      },
+    ];
+  }
+
+  delete req.session.messages;
+  delete req.session.lastEmail;
+  console.log(req.session);
   res.render('login', {
     title: 'Login',
+    errors: error,
+    email,
   });
+};
+exports.setLastEmail = (req, res, next) => {
+  req.session.lastEmail = req.body.email;
+  next();
 };
 
 exports.postLogin = passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/',
+  failureRedirect: '/login',
+  failureMessage: true,
+  // failWithError: true,
 });
 
 exports.getLogout = (req, res, next) => {

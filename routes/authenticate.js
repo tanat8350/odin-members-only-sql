@@ -3,11 +3,15 @@ const router = express.Router();
 
 const authenticateController = require('../controllers/authenticateController');
 
-router.get('/sign-up', authenticateController.getSignup);
-router.post('/sign-up', authenticateController.postSignup);
+router.get('/signup', authenticateController.getSignup);
+router.post('/signup', authenticateController.postSignup);
 
 router.get('/login', authenticateController.getLogin);
-router.post('/login', authenticateController.postLogin);
+router.post(
+  '/login',
+  authenticateController.setLastEmail,
+  authenticateController.postLogin
+);
 
 router.get('/logout', authenticateController.getLogout);
 

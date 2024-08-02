@@ -11,17 +11,6 @@ const compression = require('compression');
 const helmet = require('helmet');
 
 require('dotenv').config();
-const mongoose = require('mongoose');
-
-mongoose.set('strictQuery', false);
-
-const mongoDB = process.env.DB_URI;
-
-// NOTE: - try odin later
-main().catch((err) => console.log(err));
-async function main() {
-  await mongoose.connect(mongoDB);
-}
 
 const indexRouter = require('./routes/index');
 const authenticateRouter = require('./routes/authenticate');
