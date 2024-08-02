@@ -2,16 +2,15 @@ const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 
-const User = require('../models/user');
 const authenticateQueries = require('../db/authenticateQueries');
 
 const bcrypt = require('bcryptjs');
 
-exports.signUp_get = (req, res, next) => {
+exports.getSignup = (req, res, next) => {
   res.render('sign-up', { title: 'Sign up' });
 };
 
-exports.signUp_post = [
+exports.postSignup = [
   body('firstname')
     .trim()
     .isLength({ min: 3, max: 100 })
@@ -69,18 +68,18 @@ exports.signUp_post = [
   }),
 ];
 
-exports.login_get = (req, res, next) => {
+exports.getLogin = (req, res, next) => {
   res.render('login', {
     title: 'Login',
   });
 };
 
-exports.login_post = passport.authenticate('local', {
+exports.postLogin = passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/',
 });
 
-exports.logout = (req, res, next) => {
+exports.getLogout = (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
@@ -89,23 +88,25 @@ exports.logout = (req, res, next) => {
   });
 };
 
-exports.member_get = (req, res, next) => {
+exports.getUpdateMembership = (req, res, next) => {
   res.render('member', {
     title: 'Update membership',
     user: req.user,
   });
 };
 
-exports.member_post = async (req, res, next) => {
+exports.postUpdateMembership = async (req, res, next) => {
   let membership = '';
   if (req.body.code === process.env.CODE_MEMBER) membership = 'member';
   if (req.body.code === process.env.CODE_ADMIN) membership = 'admin';
 
-  const user = new User({
+  const user = {
+    id: +req.user.id,
     membership,
-    _id: req.user._id,
-  });
-
-  await User.findByIdAndUpdate(req.user._id, user);
+  };
+  const updated = await authenticateQueries.updateUserMembership(user);
+  if (!updated) {
+    return next({ status: 404, message: 'Fail to update user membership' });
+  }
   res.redirect('/');
 };

@@ -3,15 +3,15 @@ const router = express.Router();
 
 const authenticateController = require('../controllers/authenticateController');
 
-router.get('/sign-up', authenticateController.signUp_get);
-router.post('/sign-up', authenticateController.signUp_post);
+router.get('/sign-up', authenticateController.getSignup);
+router.post('/sign-up', authenticateController.postSignup);
 
-router.get('/login', authenticateController.login_get);
-router.post('/login', authenticateController.login_post);
+router.get('/login', authenticateController.getLogin);
+router.post('/login', authenticateController.postLogin);
 
-router.get('/logout', authenticateController.logout);
+router.get('/logout', authenticateController.getLogout);
 
-router.get('/member', authenticateController.member_get);
-router.post('/member', authenticateController.member_post);
+router.get('/member', authenticateController.getUpdateMembership);
+router.post('/member', authenticateController.postUpdateMembership);
 
 module.exports = router;

@@ -10,4 +10,14 @@ module.exports = {
     const { rows } = await pool.query(query);
     return rows[0];
   },
+
+  updateUserMembership: async (user) => {
+    const { id, membership } = user;
+    const query = {
+      text: 'UPDATE users SET membership = $1 WHERE id = $2 RETURNING *',
+      values: [membership, id],
+    };
+    const { rows } = await pool.query(query);
+    return rows[0];
+  },
 };
