@@ -1,5 +1,4 @@
-PassportJs
-
-- mongo-connect
+- express
+- postgres
+- connect-pg-simple
 - bcryptjs
-- sep config

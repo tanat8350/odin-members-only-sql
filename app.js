@@ -25,7 +25,6 @@ async function main() {
 }
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const authenticateRouter = require('./routes/authenticate');
 
 const app = express();
@@ -46,10 +45,10 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.DB_URI,
-      collection: 'sessions',
-    }),
+    // store: MongoStore.create({
+    //   mongoUrl: process.env.DB_URI,
+    //   collection: 'sessions',
+    // }),
     cookie: { maxAge: 86400000 },
   })
 );
@@ -67,7 +66,6 @@ app.use(helmet());
 app.use(compression());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/', authenticateRouter);
 
 // catch 404 and forward to error handler

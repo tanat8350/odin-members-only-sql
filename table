@@ -1,0 +1,15 @@
+odin_members_only_sql=# create table posts (id integer primary key generated always as identity,
+title varchar(100) not null,
+content text not null,
+timestamp timestamp not null default current_timestamp,
+userid integer not null,
+foreign key (userid) references users(id));
+CREATE TABLE
+
+odin_members_only_sql=# create table users (id integer primary key generated always as identity,
+odin_members_only_sql(# firstname varchar(100) not null,
+odin_members_only_sql(# lastname varchar(100) not null,
+odin_members_only_sql(# email varchar(100) not null,
+odin_members_only_sql(# password varchar(100) not null,
+odin_members_only_sql(# membership text default '');
+CREATE TABLE

@@ -1,7 +1,9 @@
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
+const asyncHandler = require('express-async-handler');
 
 const User = require('../models/user');
+const authenticateQueries = require('../db/authenticateQueries');
 
 const bcrypt = require('bcryptjs');
 
@@ -10,14 +12,14 @@ exports.signUp_get = (req, res, next) => {
 };
 
 exports.signUp_post = [
-  body('first_name')
+  body('firstname')
     .trim()
     .isLength({ min: 3, max: 100 })
     .withMessage('First name must be between 3 and 100 characters')
     .isAlpha()
     .withMessage('First name must only contain letters')
     .escape(),
-  body('last_name')
+  body('lastname')
     .trim()
     .isLength({ min: 3, max: 100 })
     .withMessage('Last name must be between 3 and 100 characters')
@@ -28,16 +30,21 @@ exports.signUp_post = [
     .trim()
     .isLength({ min: 3, max: 100 })
     .withMessage('Email must be between 3 and 100 characters')
+    .isEmail()
+    .withMessage('Email invalid format')
     .escape(),
-  async (req, res, next) => {
+  body('password')
+    .isLength({ min: 3, max: 100 })
+    .withMessage('Password must be between 3 and 100 characters'),
+  asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    const user = new User({
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+    const user = {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
       email: req.body.email,
       password: req.body.password,
-    });
+    };
 
     if (!errors.isEmpty()) {
       res.render('sign-up', {
@@ -53,10 +60,13 @@ exports.signUp_post = [
         return next(err);
       }
       user.password = hashedPassword;
-      await user.save();
+      const updated = await authenticateQueries.createUser(user);
+      if (!updated) {
+        return next({ status: 404, message: 'Fail to create user' });
+      }
       res.redirect('/');
     });
-  },
+  }),
 ];
 
 exports.login_get = (req, res, next) => {
