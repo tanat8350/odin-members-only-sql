@@ -5,6 +5,7 @@ const postQueries = require('../db/postQueries');
 
 exports.getAllPosts = asyncHandler(async (req, res, next) => {
   delete req.session.lastEmail;
+  console.log(req.isAuthenticated());
   const posts = await postQueries.getAllPosts();
 
   res.render('index', {
