@@ -9,7 +9,7 @@ block content
       label(for='firstname') First name:&nbsp;
       input(type='text' id='firstname' name='firstname' required value=(undefined === user ? '' : user.firstname))
     div
-      label(for='last-name') Last name:&nbsp;
+      label(for='lastname') Last name:&nbsp;
       input(type='text' id='lastname' name='lastname' required value=(undefined === user ? '' : user.lastname))
     div
       label(for='email') Email:&nbsp;
@@ -17,6 +17,9 @@ block content
     div
       label(for='password') Password:&nbsp;
       input(type='password' id='password' name='password' required value=(undefined === user ? '' : user.password))
+    div
+      label(for='passwordConfirmation') Password confirmation:&nbsp;
+      input(type='password' id='passwordConfirmation' name='passwordConfirmation' required)
     button(type="submit") Sign up
   p Already have an account?&nbsp;
     a(href='/login') Login

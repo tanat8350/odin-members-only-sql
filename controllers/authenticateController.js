@@ -31,10 +31,20 @@ exports.postSignup = [
     .withMessage('Email must be between 3 and 100 characters')
     .isEmail()
     .withMessage('Email invalid format')
+    .custom(async (value) => {
+      const user = await authenticateQueries.getUserByEmail(value);
+      if (user) {
+        throw new Error('Email already in use');
+        // return Promise.reject('Email already in use');
+      }
+    })
     .escape(),
   body('password')
     .isLength({ min: 3, max: 100 })
     .withMessage('Password must be between 3 and 100 characters'),
+  body('passwordConfirmation')
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage('Password are not identical'),
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -42,7 +52,6 @@ exports.postSignup = [
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
-      password: req.body.password,
     };
 
     if (!errors.isEmpty()) {
@@ -58,8 +67,11 @@ exports.postSignup = [
       if (err) {
         return next(err);
       }
-      user.password = hashedPassword;
-      const updated = await authenticateQueries.createUser(user);
+      req.body.password = hashedPassword;
+      const updated = await authenticateQueries.createUser({
+        ...user,
+        password: req.body.password,
+      });
       if (!updated) {
         return next({ status: 404, message: 'Fail to create user' });
       }
